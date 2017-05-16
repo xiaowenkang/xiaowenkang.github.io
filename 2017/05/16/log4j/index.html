@@ -1,0 +1,783 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.1" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="log4j," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.1" />
+
+
+
+
+
+
+<meta name="description" content="简介 log4j有三个主要的组件：Loggers(记录器)，Appenders (输出源)和Layouts(布局)。  LoggersLoggers分为5个级别：DEBUG、INFO、WARN、ERROR和FATAL。  级别高低顺序：  DEBUG &amp;lt; INFO &amp;lt; WARN &amp;lt; ERROR &amp;lt; FATAL   当Loggers级别设定为INFO时，只会输出级别高于或等于">
+<meta name="keywords" content="log4j">
+<meta property="og:type" content="article">
+<meta property="og:title" content="log4j.properties 配置详解">
+<meta property="og:url" content="https://xiaowenkang.github.io/2017/05/16/log4j/index.html">
+<meta property="og:site_name" content="blog">
+<meta property="og:description" content="简介 log4j有三个主要的组件：Loggers(记录器)，Appenders (输出源)和Layouts(布局)。  LoggersLoggers分为5个级别：DEBUG、INFO、WARN、ERROR和FATAL。  级别高低顺序：  DEBUG &amp;lt; INFO &amp;lt; WARN &amp;lt; ERROR &amp;lt; FATAL   当Loggers级别设定为INFO时，只会输出级别高于或等于">
+<meta property="og:updated_time" content="2017-05-16T14:27:23.541Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="log4j.properties 配置详解">
+<meta name="twitter:description" content="简介 log4j有三个主要的组件：Loggers(记录器)，Appenders (输出源)和Layouts(布局)。  LoggersLoggers分为5个级别：DEBUG、INFO、WARN、ERROR和FATAL。  级别高低顺序：  DEBUG &amp;lt; INFO &amp;lt; WARN &amp;lt; ERROR &amp;lt; FATAL   当Loggers级别设定为INFO时，只会输出级别高于或等于">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":0,"b2t":false,"scrollpercent":false},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="https://xiaowenkang.github.io/2017/05/16/log4j/"/>
+
+
+
+
+
+  <title>log4j.properties 配置详解 | blog</title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">不积跬步，何以至千里</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="https://xiaowenkang.github.io/2017/05/16/log4j/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="xiaowenkang">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/uploads/44.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">log4j.properties 配置详解</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-05-16T21:30:40+08:00">
+                2017-05-16
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/java/" itemprop="url" rel="index">
+                    <span itemprop="name">java</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h3 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h3><blockquote>
+<p>log4j有三个主要的组件：Loggers(记录器)，Appenders (输出源)和Layouts(布局)。</p>
+</blockquote>
+<h3 id="Loggers"><a href="#Loggers" class="headerlink" title="Loggers"></a>Loggers</h3><p>Loggers分为5个级别：DEBUG、INFO、WARN、ERROR和FATAL。</p>
+<p> 级别高低顺序：</p>
+<blockquote>
+<p>DEBUG &lt; INFO &lt; WARN &lt; ERROR &lt; FATAL</p>
+</blockquote>
+<p> 当Loggers级别设定为INFO时，只会输出级别高于或等于INFO的日志信息，比如，WARN,而不会输出DEBUG.</p>
+<h3 id="Appenders"><a href="#Appenders" class="headerlink" title="Appenders"></a>Appenders</h3><p>Appenders允许把日志输出到不同的地方，如控制台（Console）,文件（Files）等。<br> 常使用的类有： </p>
+<ul>
+<li>org.apache.log4j.ConsoleAppender（控制台） </li>
+<li>org.apache.log4j.FileAppender（文件） </li>
+<li>org.apache.log4j.DailyRollingFileAppender（每天产生一个日志文件） </li>
+<li>org.apache.log4j.RollingFileAppender（文件大小到达指定尺寸的时候产生一个新的文件） </li>
+<li>org.apache.log4j.WriterAppender（将日志信息以流格式发送到任意指定的地方）  </li>
+</ul>
+<h3 id="Layouts"><a href="#Layouts" class="headerlink" title="Layouts"></a>Layouts</h3><p>Layouts能将日志输出格式化，提供了四种日志输出样式.</p>
+<ul>
+<li>org.apache.log4j.HTMLLayout（以HTML表格形式布局） </li>
+<li>org.apache.log4j.PatternLayout（可以灵活地指定布局模式） </li>
+<li>org.apache.log4j.SimpleLayout（包含日志信息的级别和信息字符串） </li>
+<li>org.apache.log4j.TTCCLayout（包含日志产生的时间、线程、类别等信息）</li>
+</ul>
+<h3 id="配置详解"><a href="#配置详解" class="headerlink" title="配置详解"></a>配置详解</h3><p>log4j支持两种配置文件格式，一种是XML格式的文件，一种是properties属性文件。下面log4j.properties为例讲解</p>
+<p><strong>log4j.properties一般放在classpath路径下</strong><br>如果采用自动加载的模式，log4j.properties要放在src目录或是源文件目录下。这种方式打包，log4j文件是打进包里面的。</p>
+<p>如果手动加载，需要加上如下代码，自己设置文件路径</p>
+<blockquote>
+<p>PropertyConfigurator.configure(“config/log4j.properties”)  </p>
+</blockquote>
+<p>这种方式打包更灵活，log4j文件不用打进包里，可以放在jar包外面，如上面的，就是放在和jar文件同目录的config目录里面</p>
+<p><strong>配置根Logger</strong><br>log4j.rootLogger = [ level ] , appenderName1, appenderName2, …<br>level 表示级别<br>appenderName：就是指定日志信息要输出到哪里。可以同时指定多个输出目的地，用逗号隔开。</p>
+<p><strong>配置日志输出目的地</strong><br>log4j.appender.appenderName = className<br>appenderName：自定义appenderName，在log4j.rootLogger中设置过的；<br>className：可设值如下： </p>
+<ul>
+<li>org.apache.log4j.ConsoleAppender（控制台） </li>
+<li>org.apache.log4j.FileAppender（文件） </li>
+<li>org.apache.log4j.DailyRollingFileAppender（每天产生一个日志文件） </li>
+<li>org.apache.log4j.RollingFileAppender（文件大小到达指定尺寸的时候产生一个新的文件） </li>
+<li>org.apache.log4j.WriterAppender（将日志信息以流格式发送到任意指定的地方）</li>
+</ul>
+<p><strong>配置日志信息的输出格式（Layout）</strong><br>log4j.appender.appenderName.layout=className<br>className：可设值如下： </p>
+<ul>
+<li>org.apache.log4j.HTMLLayout（以HTML表格形式布局） </li>
+<li>org.apache.log4j.PatternLayout（可以灵活地指定布局模式） </li>
+<li>org.apache.log4j.SimpleLayout（包含日志信息的级别和信息字符串） </li>
+<li>org.apache.log4j.TTCCLayout（包含日志产生的时间、线程、类别等等信息）</li>
+</ul>
+<p>格式化符号说明</p>
+<ul>
+<li>%p：输出日志信息的优先级，即DEBUG，INFO，WARN，ERROR，FATAL。 </li>
+<li>%d：输出日志时间点的日期或时间，默认格式为ISO8601，也可以在其后指定格式，如：%d{yyyy/MM/dd HH:mm:ss,SSS}。 </li>
+<li>%r：输出自应用程序启动到输出该log信息耗费的毫秒数。 </li>
+<li>%t：输出产生该日志事件的线程名。 </li>
+<li>%l：输出日志事件的发生位置，相当于%c.%M(%F:%L)的组合，包括类全名、方法、文件名以及在代码中的行数。例如：test.TestLog4j.main(TestLog4j.java:10)。 </li>
+<li>%c：输出日志信息所属的类目，通常就是所在类的全名。 </li>
+<li>%M：输出产生日志信息的方法名。 </li>
+<li>%F：输出日志消息产生时所在的文件名称。 </li>
+<li>%L:：输出代码中的行号。 </li>
+<li>%m:：输出代码中指定的具体日志信息。 </li>
+<li>%n：输出一个回车换行符，Windows平台为”\r\n”，Unix平台为”\n”。 </li>
+<li>%x：输出和当前线程相关联的NDC(嵌套诊断环境)，尤其用到像java servlets这样的多客户多线程的应用中。 </li>
+<li>%%：输出一个”%”字符。 </li>
+</ul>
+<p>另外，还可以在%与格式字符之间加上修饰符来控制其最小长度、最大长度、和文本的对齐方式。如：<br>1)%20c：指定输出category的名称，最小的长度是20，如果category的名称长度小于20的话，默认的情况下右对齐。<br>2)%-20c：”-“号表示左对齐。<br>3)%.30c：指定输出category的名称，最大的长度是30，如果category的名称长度大于30的话，就会将左边多出的字符截掉，但小于30的话也不会补空格。</p>
+<h3 id="配置示例"><a href="#配置示例" class="headerlink" title="配置示例"></a>配置示例</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div></pre></td><td class="code"><pre><div class="line">log4j.rootLogger=DEBUG,console,logFile,rollingFile </div><div class="line">log4j.additivity.org.apache=true </div><div class="line"># 控制台(console) </div><div class="line">log4j.appender.console=org.apache.log4j.ConsoleAppender </div><div class="line">log4j.appender.console.Threshold=DEBUG </div><div class="line">log4j.appender.console.ImmediateFlush=true </div><div class="line">log4j.appender.console.Target=System.err </div><div class="line">log4j.appender.console.layout=org.apache.log4j.PatternLayout </div><div class="line">log4j.appender.console.layout.ConversionPattern=[%-5p] %d(%r) --&gt; [%t] %l: %m %x %n </div><div class="line"></div><div class="line"># 日志文件(logFile) </div><div class="line">log4j.appender.logFile=org.apache.log4j.FileAppender </div><div class="line">log4j.appender.logFile.Threshold=DEBUG </div><div class="line">log4j.appender.logFile.ImmediateFlush=true </div><div class="line">log4j.appender.logFile.Append=true </div><div class="line">log4j.appender.logFile.File=D:/logs/log.log4j </div><div class="line">log4j.appender.logFile.layout=org.apache.log4j.PatternLayout </div><div class="line">log4j.appender.logFile.layout.ConversionPattern=[%-5p] %d(%r) --&gt; [%t] %l: %m %x %n </div><div class="line"># 回滚文件(rollingFile) </div><div class="line">log4j.appender.rollingFile=org.apache.log4j.RollingFileAppender </div><div class="line">log4j.appender.rollingFile.Threshold=DEBUG </div><div class="line">log4j.appender.rollingFile.ImmediateFlush=true </div><div class="line">log4j.appender.rollingFile.Append=true </div><div class="line">log4j.appender.rollingFile.File=D:/logs/log.log4j </div><div class="line">log4j.appender.rollingFile.MaxFileSize=200KB </div><div class="line">log4j.appender.rollingFile.MaxBackupIndex=50 </div><div class="line">log4j.appender.rollingFile.layout=org.apache.log4j.PatternLayout </div><div class="line">log4j.appender.rollingFile.layout.ConversionPattern=[%-5p] %d(%r) --&gt; [%t] %l: %m %x %n</div></pre></td></tr></table></figure>
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/log4j/" rel="tag"># log4j</a>
+          
+        </div>
+      
+
+      
+        
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/05/14/logger/" rel="next" title="slf4j,log4j,logback常用日志">
+                <i class="fa fa-chevron-left"></i> slf4j,log4j,logback常用日志
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/uploads/44.jpg"
+               alt="xiaowenkang" />
+          <p class="site-author-name" itemprop="name">xiaowenkang</p>
+           
+              <p class="site-description motion-element" itemprop="description">随心而动~</p>
+          
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives">
+                <span class="site-state-item-count">6</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-categories">
+              <a href="/categories/index.html">
+                <span class="site-state-item-count">2</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              <a href="/tags/index.html">
+                <span class="site-state-item-count">5</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#简介"><span class="nav-number">1.</span> <span class="nav-text">简介</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Loggers"><span class="nav-number">2.</span> <span class="nav-text">Loggers</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Appenders"><span class="nav-number">3.</span> <span class="nav-text">Appenders</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Layouts"><span class="nav-number">4.</span> <span class="nav-text">Layouts</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#配置详解"><span class="nav-number">5.</span> <span class="nav-text">配置详解</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#配置示例"><span class="nav-number">6.</span> <span class="nav-text">配置示例</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2017</span>
+  <span class="with-love">
+    <i class="fa fa-star"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">xiaowenkang</span>
+</div>
+
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Pisces
+  </a>
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.1"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.1"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.1"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.1"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
